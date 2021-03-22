@@ -1,0 +1,23 @@
+---
+- name: Get company name based on mac address
+  connection: local
+  gather_facts: true
+  hosts: localhost
+  tasks:
+    - name: Send get request
+      uri:
+        url: "https://api.macaddress.io/v1?apiKey={{ lookup('env', 'API_KEY') }}&output=json&search={{ mac_address }}"
+        method: GET
+        validate_certs: False
+        return_content: yes
+        status_code: 200
+        body_format: json
+      register: data
+
+    - name: Print returned json dictionary
+      debug:
+        var: data.json
+
+    - name: Print company Name
+      debug:
+        var: data.json.vendorDetails.companyName
